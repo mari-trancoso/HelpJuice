@@ -3,7 +3,12 @@ class ArticlesController < ApplicationController
 
   # GET /articles or /articles.json
   def index
-    @articles = Article.all
+    if params[:query].present?
+      SearchQuery.create(query: params[:query], user_ip: request.remote_ip)
+      @articles = Article.where('title LIKE ?', "%#{params[:query]}%")
+    else
+      @articles = Article.all
+    end
   end
 
   # GET /articles/1 or /articles/1.json
